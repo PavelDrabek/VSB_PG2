@@ -7,6 +7,9 @@
     <Filter Include="CoreHeaders">
       <UniqueIdentifier>{921ba752-3dd7-4c7a-8f1d-d3133fe158ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CustomHeaders">
+      <UniqueIdentifier>{212baba7-6405-4306-b5f7-be0d24b22220}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="demo2.cpp">
@@ -122,6 +125,12 @@
     </ClInclude>
     <ClInclude Include="CoreHeaders\vao_SceneOrigin.h">
       <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="vao_TetraedrV3C4.h">
+      <Filter>CustomHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="entity_Tetraedr_Simple.h">
+      <Filter>CustomHeaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

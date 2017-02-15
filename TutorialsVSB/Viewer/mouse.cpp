@@ -34,7 +34,7 @@ void Mouse::activeMove(int x, int y)
 
 	if ( testBit(CAMERA_ROTATING, m_state) ) 
 	{
-		m_camera->rotateSmoothly(m_delta[0], m_delta[1], 0.0f);
+		m_camera->rotateSmoothly(m_delta[0] * 0.05f, m_delta[1] * 0.05f, 0.0f);
 	}
 
 	if ( testBit(CAMERA_MOVING, m_state ) ) 

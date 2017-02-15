@@ -317,9 +317,11 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="demos.h" />
+    <ClInclude Include="entity_Tetraedr_Simple.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="sceneManager.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="vao_TetraedrV3C4.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
