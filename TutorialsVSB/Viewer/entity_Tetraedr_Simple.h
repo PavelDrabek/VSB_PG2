@@ -26,7 +26,7 @@ inline void Entity_Tetraedr_Simple::draw(const unsigned int eid)
 	if (!m_isInitialized) return;
 
 	glBindVertexArray(m_vao->m_object);
-	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 
