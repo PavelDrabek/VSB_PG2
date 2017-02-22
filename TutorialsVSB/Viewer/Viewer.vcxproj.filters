@@ -18,6 +18,9 @@
     <ClCompile Include="program.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="sceneManager.cpp" />
+    <ClCompile Include="demo3.cpp">
+      <Filter>Demos</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -130,6 +133,15 @@
       <Filter>CustomHeaders</Filter>
     </ClInclude>
     <ClInclude Include="entity_Tetraedr_Simple.h">
+      <Filter>CustomHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="demo3.h">
+      <Filter>Demos</Filter>
+    </ClInclude>
+    <ClInclude Include="vao_CubeV3C4N3.h">
+      <Filter>CustomHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="entity_Cube.h">
       <Filter>CustomHeaders</Filter>
     </ClInclude>
   </ItemGroup>
