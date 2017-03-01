@@ -21,6 +21,9 @@
     <ClCompile Include="demo3.cpp">
       <Filter>Demos</Filter>
     </ClCompile>
+    <ClCompile Include="demo4.cpp">
+      <Filter>Demos</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -143,6 +146,12 @@
     </ClInclude>
     <ClInclude Include="entity_Cube.h">
       <Filter>CustomHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="demo4.h">
+      <Filter>Demos</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\entity_OBJ.h">
+      <Filter>CoreHeaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

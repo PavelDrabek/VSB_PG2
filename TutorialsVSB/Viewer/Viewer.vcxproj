@@ -276,6 +276,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClCompile Include="demo2.cpp" />
     <ClCompile Include="demo3.cpp" />
+    <ClCompile Include="demo4.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="program.cpp" />
     <ClCompile Include="sceneManager.cpp" />
@@ -288,6 +289,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="CoreHeaders\entity.h" />
     <ClInclude Include="CoreHeaders\entity_Cube_Simple.h" />
     <ClInclude Include="CoreHeaders\entity_GridXY.h" />
+    <ClInclude Include="CoreHeaders\entity_OBJ.h" />
     <ClInclude Include="CoreHeaders\entity_SceneOrigin.h" />
     <ClInclude Include="CoreHeaders\entity_VAO.h" />
     <ClInclude Include="CoreHeaders\fbo.h" />
@@ -318,6 +320,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="demo3.h" />
+    <ClInclude Include="demo4.h" />
     <ClInclude Include="demos.h" />
     <ClInclude Include="entity_Cube.h" />
     <ClInclude Include="entity_Tetraedr_Simple.h" />
