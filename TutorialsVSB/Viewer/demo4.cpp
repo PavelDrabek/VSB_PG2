@@ -12,8 +12,8 @@ void Demo4::initShaders()
 {
 	addResPath("shaders/");
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag", 0);
-	//TODO: Add shaders
 	initShaderProgram("adsOBJ_v3_n3_t3.vert", "adsOBJ_v3_n3_t3.frag", 0);
+	initShaderProgram("goochOBJ_v3_n3_t3.vert", "goochOBJ_v3_n3_t3.frag", 0);
 	resetResPath();
 }
 
@@ -121,9 +121,9 @@ void Demo4::render()
 	Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
 	e->draw();
 	
-	//TODO: Uncomment, to change the active shader 
-	//ss->m_activeShader = m_sceneData->shaderPrograms[2];
-	//ss->m_activeShader->enable();
+	// gooch shader
+	ss->m_activeShader = m_sceneData->shaderPrograms[2];
+	ss->m_activeShader->enable();
 
 	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
 
