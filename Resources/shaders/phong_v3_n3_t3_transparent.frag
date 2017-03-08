@@ -33,20 +33,23 @@ in vec3 ecViewDir;
 
 void main()
 {
-	vec3 V = normalize(ecViewDir);
-	vec3 L = normalize(ecLightDir);
 	vec3 N = normalize(ecNormal);
-	vec3 R = normalize(2 * dot(L, N) * N - L);
+	vec3 L = normalize(ecLightDir);
 	// vec3 R = normalize(-reflect(L, N));
+	vec3 R = normalize(2 * dot(L, N) * N - L);
+	vec3 ecViewDir_norm = normalize(ecViewDir);
 
-	float gooch = dot(V, N);
-	vec3 cFrom = vec3(1,0,0);
-	vec3 cTo = vec3(0,0,1);
-
-	vec3 c = mix(cFrom, cTo, gooch);
-	if(abs(gooch) < 0.1) {
-		c = vec3(0);
+	float lambert = dot(R, N);
+	if(material.transparency > 0) {
+		lambert = abs(lambert);
 	}
+	lambert = max(0, lambert);
 
-	FragColor = vec4(c, 1);
+	float phong = max(pow(dot(ecViewDir_norm, R), 40), 0);
+	
+	vec3 ambient = material.ambient.xyz * light.ambient.xyz;
+	vec3 diffuse = lambert * material.diffuse.xyz * light.diffuse.xyz;
+	vec3 specular = phong * material.specular.xyz * light.specular.xyz;
+
+	FragColor = vec4(ambient + diffuse + specular, 1 - material.transparency);
 }

@@ -24,6 +24,9 @@
     <ClCompile Include="demo4.cpp">
       <Filter>Demos</Filter>
     </ClCompile>
+    <ClCompile Include="demo5.cpp">
+      <Filter>Demos</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -152,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="CoreHeaders\entity_OBJ.h">
       <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="demo5.h">
+      <Filter>Demos</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
