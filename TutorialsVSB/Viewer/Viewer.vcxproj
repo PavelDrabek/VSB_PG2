@@ -278,6 +278,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="demo3.cpp" />
     <ClCompile Include="demo4.cpp" />
     <ClCompile Include="demo5.cpp" />
+    <ClCompile Include="demo6.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="program.cpp" />
     <ClCompile Include="sceneManager.cpp" />
@@ -323,6 +324,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="demo3.h" />
     <ClInclude Include="demo4.h" />
     <ClInclude Include="demo5.h" />
+    <ClInclude Include="demo6.h" />
     <ClInclude Include="demos.h" />
     <ClInclude Include="entity_Cube.h" />
     <ClInclude Include="entity_Tetraedr_Simple.h" />
@@ -330,6 +332,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="sceneManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="vao_CubeV3C4N3.h" />
+    <ClInclude Include="vao_CubeV3C4N3T2.h" />
     <ClInclude Include="vao_TetraedrV3C4.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
