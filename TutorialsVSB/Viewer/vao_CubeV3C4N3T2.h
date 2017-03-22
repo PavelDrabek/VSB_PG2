@@ -58,7 +58,6 @@ public:
 		glEnableVertexAttribArray(1); // color
 		glEnableVertexAttribArray(2); // normal
 		glEnableVertexAttribArray(3); // s
-		glEnableVertexAttribArray(4); // t
 
 		//-> TODO Enable vertex attribute for Textures
 
@@ -66,8 +65,7 @@ public:
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(float), 0);
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (GLvoid*)(7 * sizeof(float)));
-		glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (GLvoid*)(10 * sizeof(float)));
-		glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (GLvoid*)(11 * sizeof(float)));
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (GLvoid*)(10 * sizeof(float)));
 
 		//-> TODO Set vertex attribute pointer for Textures
 

@@ -40,9 +40,35 @@ void Demo6::initTextures()
 	GLuint texID;
 	FIBITMAP *image = ImageManager::GenericLoader(getResFile("skala.bmp"), 0);
 
-	//TODO Create Texture:
 	buffer = (GLubyte*)malloc(3 * texWidth * texHeight);
 	if (buffer == NULL) exit(1);
+	
+	//TODO Create Texture:
+	glGenTextures(1, &texID);
+	glBindTexture(GL_TEXTURE_2D, texID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	int bpp = FreeImage_GetBPP(image);
+	int imgWidth = FreeImage_GetWidth(image);
+	int imgHeight = FreeImage_GetHeight(image);
+	switch (bpp)
+	{
+	case 8: 
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RED, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+		break;
+	case 24:
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+		break;
+	case 32:
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+		break;
+	default:
+		printf("ERROR: Unknown BPP of image");
+		break;
+	}
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAX_ANISOTROPY_EXT,16);
@@ -132,6 +158,11 @@ void Demo6::render()
 	Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
 
 	//TODO: Active Texture Unit and Bind Texture
+	glActiveTexture(GL_TEXTURE0);
+	if (uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "tex1") >= 0) {
+		glUniform1i(uniform, 0);
+	}
+
 
 	e->draw();
 	

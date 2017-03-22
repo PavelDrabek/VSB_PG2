@@ -24,6 +24,7 @@ layout(location = 0) out vec4 FragColor;
 
 uniform LightInfo light;
 uniform MaterialInfo material;
+uniform sampler2D tex1;
 
 //The prefix ec means Eye Coordinates in the Eye Coordinate System
 in vec4 ecPosition;			
@@ -47,5 +48,7 @@ void main()
 	vec3 diffuse = lambert * material.diffuse.xyz * light.diffuse.xyz;
 	vec3 specular = phong * material.specular.xyz * light.specular.xyz;
 
-	FragColor = vec4(ambient + diffuse + specular, 1);
+	FragColor = texture(tex1, texCoord);
+
+	// FragColor = vec4(ambient + diffuse + specular, 1);
 }
