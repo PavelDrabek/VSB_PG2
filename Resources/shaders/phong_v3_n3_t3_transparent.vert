@@ -1,4 +1,4 @@
-#version 400 core //compatibility
+#version 410 core //compatibility
 
 struct MaterialInfo {
 	vec4 ambient;			//Material ambient color
@@ -37,6 +37,7 @@ out vec4 ecPosition;
 out vec3 ecLightDir;
 out vec3 ecNormal;
 out vec3 ecViewDir;
+out vec3 texCoord;
 
 void main()
 {
@@ -45,6 +46,6 @@ void main()
 	ecNormal = NormalMatrix * VertexNormal;
 	ecViewDir = vec3(-ecPosition); // kamera je v 0 (protoze jsme v eye coordinates)
 
-
+	texCoord = VertexTex;
 	gl_Position = PMatrix * ecPosition;
 }

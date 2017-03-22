@@ -7,6 +7,7 @@
 #include "entity_SceneOrigin.h"
 #include "entity_GridXY.h"
 #include "entity_Cube.h"
+#include "entity_OBJ.h"
 
 void Demo6::initShaders()
 {
@@ -15,6 +16,21 @@ void Demo6::initShaders()
 	
 	//TODO - update previous ADS shader to accept texture:
 	initShaderProgram("ads_v3_c4_n3_t2.vert", "ads_v3_c4_n3_t2.frag");
+	initShaderProgram("phong_v3_n3_t3_transparent.vert", "phong_v3_n3_t3_transparent.frag", 0);
+
+	resetResPath();
+}
+
+void Demo6::initModels()
+{
+	ObjLoader objL;
+	Model* m;
+
+	addResPath("models/");
+
+	m = objL.loadModel(getResFile("vase/vase.obj"));
+	m_sceneData->models.push_back(m);
+
 	resetResPath();
 }
 
@@ -31,6 +47,10 @@ void Demo6::initVAOs()
 	VAO_CubeV3C4N3T2* vao2 = new VAO_CubeV3C4N3T2();
 	vao2->init();
 	m_sceneData->vaos.push_back(vao2);
+
+	VAO* vao3 = new VAO();
+	vao3->createFromModel(m_sceneData->models[0]);
+	m_sceneData->vaos.push_back(vao3);
 }
 
 void Demo6::initTextures()
@@ -84,13 +104,31 @@ void Demo6::initMaterials()
 {
 	Material *m = new Material();
 
-	m->setName("White_opaque");
+	m->setName("Black_opaque");
 	m->m_diffuse[0] = 0.0f;
 	m->m_diffuse[1] = 0.0f;
 	m->m_diffuse[2] = 0.0f;
 	m->m_diffuse[3] = 1.0f;
 	m->m_transparency = 0.0f;
 
+	m->m_diffuseTextureGL = m_sceneData->textures[0];
+	m_sceneData->materials.push_back(m);
+
+	m = new Material();
+	m->setName("White_opaque");
+	m->m_ambient[0] = m->m_ambient[1] = m->m_ambient[2] = 1.0f;	 m->m_ambient[3] = 1.0f;
+	m->m_diffuse[0] = 0.8f; m->m_diffuse[1] = 1.0; m->m_diffuse[2] = 0.8f;	 m->m_diffuse[3] = 1.0f;
+	m->m_specular[0] = m->m_specular[1] = m->m_specular[2] = 0.2f; m->m_specular[3] = 1.0f;
+	m->m_transparency = 0.0f;
+	m->m_diffuseTextureGL = m_sceneData->textures[0];
+	m_sceneData->materials.push_back(m);
+
+	m = new Material();
+	m->setName("White_transparent");
+	m->m_ambient[0] = m->m_ambient[1] = m->m_ambient[2] = 1.0f;	 m->m_ambient[3] = 1.0f;
+	m->m_diffuse[0] = 0.8f; m->m_diffuse[1] = 1.0; m->m_diffuse[2] = 0.8f;	 m->m_diffuse[3] = 1.0f;
+	m->m_specular[0] = m->m_specular[1] = m->m_specular[2] = 0.2f; m->m_specular[3] = 1.0f;
+	m->m_transparency = 0.5f;
 	m->m_diffuseTextureGL = m_sceneData->textures[0];
 	m_sceneData->materials.push_back(m);
 }
@@ -112,6 +150,27 @@ void Demo6::initSceneEntities()
 	e->m_material = m_sceneData->materials[0];
 	e->init();
 	m_sceneData->sceneEntities.push_back(e);
+
+	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[0], m_sceneData->vaos[3]);
+	obj->setPosition(0, 0, 0);
+	obj->setOrientation(0, 0, 90);
+	obj->m_material = m_sceneData->materials[2];
+	obj->init();
+	m_sceneData->sceneEntities.push_back(obj);
+
+	obj = new Entity_OBJ(m_sceneData->models[0], m_sceneData->vaos[3]);
+	obj->setPosition(0, 1.5f, 0);
+	obj->setOrientation(0, 0, 90);
+	obj->m_material = m_sceneData->materials[1];
+	obj->init();
+	m_sceneData->sceneEntities.push_back(obj);
+
+	obj = new Entity_OBJ(m_sceneData->models[0], m_sceneData->vaos[3]);
+	obj->setPosition(0, 3.0f, 0);
+	obj->setOrientation(0, 0, 90);
+	obj->m_material = m_sceneData->materials[2];
+	obj->init();
+	m_sceneData->sceneEntities.push_back(obj);
 }
 
 void Demo6::render()
@@ -130,6 +189,9 @@ void Demo6::render()
 	int uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MVPMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewProjectionMatrix());
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[0]);
+
 	for (unsigned int i = 0; i < m_sceneData->infoEntities.size(); i++)
 		m_sceneData->infoEntities[i]->draw();
 
@@ -137,9 +199,13 @@ void Demo6::render()
 
 #pragma region Draw Scene Entities
 
-	ss->m_activeShader = m_sceneData->shaderPrograms[1];
-	ss->m_activeShader->enable();
+	// not transparent
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 
+	ss->m_activeShader = m_sceneData->shaderPrograms[2];
+	ss->m_activeShader->enable();
 	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
 
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
@@ -147,25 +213,39 @@ void Demo6::render()
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
 
-	e = m_sceneData->sceneEntities[0];
-
-	glm::mat4 tmp = ss->m_activeCamera->getVM() * e->m_modelMatrix;
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MVMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tmp[0]);
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "NormalMatrix");
-	glUniformMatrix3fv(uniform, 1, GL_FALSE, (float*)&(glm::inverseTranspose(glm::mat3(tmp)))[0]);
-
-	Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
-
-	//TODO: Active Texture Unit and Bind Texture
-	glActiveTexture(GL_TEXTURE0);
-	if (uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "tex1") >= 0) {
-		glUniform1i(uniform, 0);
+	for (Entity **e = m_sceneData->sceneEntities.front(); e <= m_sceneData->sceneEntities.back(); e++)
+	{
+		if ((*e)->m_material->m_transparency <= 0) {
+			Material::setShaderUniform((*e)->m_material, ss->m_activeShader, "material");
+			(*e)->draw();
+		}
 	}
 
+	// transparent
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+	glDisable(GL_CULL_FACE);
 
-	e->draw();
-	
+	ss->m_activeShader = m_sceneData->shaderPrograms[2];
+	ss->m_activeShader->enable();
+	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
+
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
+
+	for (Entity **e = m_sceneData->sceneEntities.front(); e <= m_sceneData->sceneEntities.back(); e++)
+	{
+		if ((*e)->m_material->m_transparency > 0) {
+			Material::setShaderUniform((*e)->m_material, ss->m_activeShader, "material");
+			(*e)->draw();
+		}
+	}
+	glDepthMask(GL_TRUE);
+
 	ss->m_activeShader->disable();
 
 	glFlush();

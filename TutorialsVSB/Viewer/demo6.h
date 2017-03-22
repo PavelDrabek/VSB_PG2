@@ -7,6 +7,7 @@ class Demo6 : public SceneInitializer
 {
 private:
 	void initShaders();
+	void initModels();
 	void initTextures();
 	void initMaterials();
 	void initVAOs();

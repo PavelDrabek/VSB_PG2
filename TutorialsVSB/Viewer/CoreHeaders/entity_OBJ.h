@@ -53,6 +53,14 @@ inline void Entity_OBJ::draw(const unsigned int eid)
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "NormalMatrix");
 	glUniformMatrix3fv(uniform, 1, GL_FALSE, (float*)&(glm::inverseTranspose(glm::mat3(tmp)))[0]);
 
+	if ((uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "tex1")) >= 0) {
+		glUniform1i(uniform, 0);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+	}
+	else {
+		printf("has no tex1 uniform");
+	}
+
+
 	glBindVertexArray(m_vao->m_object);
 
 	for (unsigned int i = 0; i<m_vao->m_eai->size(); i++)

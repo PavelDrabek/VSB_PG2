@@ -1,4 +1,4 @@
-#version 400 core //compatibility
+#version 410 core //compatibility
 
 struct MaterialInfo {
 	vec4 ambient;			//Material ambient color
@@ -24,12 +24,14 @@ layout(location = 0) out vec4 FragColor;
 
 uniform LightInfo light;
 uniform MaterialInfo material;
+uniform sampler2D tex1;
 
 //The prefix ec means Eye Coordinates in the Eye Coordinate System
 in vec4 ecPosition;			
 in vec3 ecLightDir;
 in vec3 ecNormal;
 in vec3 ecViewDir;
+in vec3 texCoord;
 
 void main()
 {
@@ -47,8 +49,9 @@ void main()
 
 	float phong = max(pow(dot(ecViewDir_norm, R), 40), 0);
 	
-	vec3 ambient = material.ambient.xyz * light.ambient.xyz;
-	vec3 diffuse = lambert * material.diffuse.xyz * light.diffuse.xyz;
+	vec4 texColor = texture(tex1, texCoord.st);
+	vec3 ambient = texColor.xyz * material.ambient.xyz * light.ambient.xyz;
+	vec3 diffuse = lambert * texColor.xyz * light.diffuse.xyz;
 	vec3 specular = phong * material.specular.xyz * light.specular.xyz;
 
 	FragColor = vec4(ambient + diffuse + specular, 1 - material.transparency);
