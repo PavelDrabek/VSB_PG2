@@ -27,8 +27,10 @@ layout(location = 3) in vec2 VertexTexCoord;
 
 uniform mat4 PMatrix;		//Camera projection matrix
 uniform mat4 VMatrix;		//Camera view matrix
+uniform mat4 MMatrix;		//Model matrix
 uniform mat4 MVMatrix;		//VMatrix * Model matrix
 uniform mat3 NormalMatrix;	//MVMatrix ... -> converted into normal matrix (inverse transpose operation)
+uniform mat4 TMatrix;		//TMatrix 
 
 uniform LightInfo light;
 uniform MaterialInfo material;
@@ -47,6 +49,6 @@ void main()
 	ecNormal = NormalMatrix * VertexNormal;
 	ecViewDir = vec3(-ecPosition); // kamera je v 0 (protoze jsme v eye coordinates)
 
-	texCoord = VertexTexCoord;
+	texCoord = vec2(TMatrix * MMatrix * vec4(VertexPosition, 1));
 	gl_Position = PMatrix * ecPosition;
 }

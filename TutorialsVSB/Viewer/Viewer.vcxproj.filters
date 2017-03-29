@@ -30,6 +30,7 @@
     <ClCompile Include="demo6.cpp">
       <Filter>Demos</Filter>
     </ClCompile>
+    <ClCompile Include="demo7.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -168,5 +169,6 @@
     <ClInclude Include="vao_CubeV3C4N3T2.h">
       <Filter>CustomHeaders</Filter>
     </ClInclude>
+    <ClInclude Include="demo7.h" />
   </ItemGroup>
 </Project>

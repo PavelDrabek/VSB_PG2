@@ -56,8 +56,8 @@ inline void Entity_OBJ::draw(const unsigned int eid)
 	if ((uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "tex1")) >= 0) {
 		glUniform1i(uniform, 0);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 	}
-	else {
-		printf("has no tex1 uniform");
+	if ((uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "tex2")) >= 0) {
+		glUniform1i(uniform, 1);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 	}
 
 
