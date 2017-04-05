@@ -30,7 +30,12 @@
     <ClCompile Include="demo6.cpp">
       <Filter>Demos</Filter>
     </ClCompile>
-    <ClCompile Include="demo7.cpp" />
+    <ClCompile Include="demo7.cpp">
+      <Filter>Demos</Filter>
+    </ClCompile>
+    <ClCompile Include="demo8.cpp">
+      <Filter>Demos</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -169,6 +174,11 @@
     <ClInclude Include="vao_CubeV3C4N3T2.h">
       <Filter>CustomHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="demo7.h" />
+    <ClInclude Include="demo7.h">
+      <Filter>Demos</Filter>
+    </ClInclude>
+    <ClInclude Include="demo8.h">
+      <Filter>Demos</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
