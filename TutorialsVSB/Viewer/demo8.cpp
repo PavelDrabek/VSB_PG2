@@ -15,9 +15,7 @@ void Demo8::initShaders()
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
 	//TODO - update previous ADS shader to accept texture:
-	initShaderProgram("ads_v3_c4_n3_t2.vert", "ads_v3_c4_n3_t2.frag");
-	initShaderProgram("phong_v3_n3_t3_transparent.vert", "phong_v3_n3_t3_transparent.frag", 0);
-	initShaderProgram("terrain_v3_c4_n3_t2.vert", "terrain_v3_c4_n3_t2.frag", 0);
+	initShaderProgram("ads_v3_n3_t3.vert", "ads_v3_n3_t3.frag");
 
 	resetResPath();
 }
@@ -50,7 +48,7 @@ void Demo8::initVAOs()
 	m_sceneData->vaos.push_back(vao2);
 
 	VAO* vao3 = new VAO();
-	vao3->createFromModel(m_sceneData->models[0]);
+	vao3->createFromModelWithTBN(m_sceneData->models[0]);
 	m_sceneData->vaos.push_back(vao3);
 
 }
@@ -64,13 +62,10 @@ void Demo8::initTextures()
 	if (buffer == NULL) exit(1);
 
 	//Load sprite textures
-	GLuint texID = createTexture("1Dtexture.bmp", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	GLuint texID = createTexture("stonewallDiffuse.bmp", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("skala.bmp", GL_REPEAT, GL_LINEAR);
-	m_sceneData->textures.push_back(texID);
-
-	texID = createTexture("trava.bmp", GL_REPEAT, GL_LINEAR);
+	texID = createTexture("stonewallNormal.bmp", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
 	resetResPath();
@@ -172,7 +167,7 @@ void Demo8::initSceneEntities()
 	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[0], m_sceneData->vaos[3]);
 	obj->setPosition(0, 0, 0);
 	obj->setOrientation(0, 0, 90);
-	obj->m_material = m_sceneData->materials[2];
+	obj->m_material = m_sceneData->materials[1];
 	obj->init();
 	m_sceneData->sceneEntities.push_back(obj);
 }
@@ -209,16 +204,17 @@ void Demo8::render()
 
 	glDisable(GL_BLEND);
 
+	/*
 	// terrain
 	ss->m_activeShader = m_sceneData->shaderPrograms[3];
 	ss->m_activeShader->enable();
 	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
+	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[0]);
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[2]);
+	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
 
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
@@ -237,6 +233,7 @@ void Demo8::render()
 			(*e)->draw();
 		}
 	}
+	*/
 
 	// not transparent
 	ss->m_activeShader = m_sceneData->shaderPrograms[1];
@@ -244,6 +241,9 @@ void Demo8::render()
 	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
 
 	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[0]);
+
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
 
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
@@ -264,6 +264,7 @@ void Demo8::render()
 		}
 	}
 
+	/*
 	// transparent
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
@@ -288,6 +289,7 @@ void Demo8::render()
 		}
 	}
 	glDepthMask(GL_TRUE);
+	*/
 
 	ss->m_activeShader->disable();
 
