@@ -42,7 +42,7 @@ void main()
 	vec3 tsTextureNormal = texture(texNormal, vs_out.texCoord).rgb * 2 - vec3(1);
 	vec4 texColor = vec4(1,1,1,1);
 
-	if(material.hasDiffuseTexture)
+	if(material.hasDiffuseTexture != 0)
 	{
 		texColor = texColor * texture(texDiffuse, vs_out.texCoord);
 	}
