@@ -72,7 +72,7 @@ inline void Entity_OBJ::draw(const unsigned int eid)
 	}
 
 	if ((uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "texDepth")) >= 0) {
-		glUniform1i(uniform, 1);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+		glUniform1i(uniform, 2);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 	} else {
 		printf("cannot find texDepth \n");
 	}

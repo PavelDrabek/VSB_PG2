@@ -38,24 +38,49 @@ uniform sampler2D texDepth;	// texture for parallax
 //The prefix ec means Eye Coordinates in the Eye Coordinate System
 in VS_OUT vs_out;
 
+const float scale = 0.05;
+const float numSteps = 10;
+float stepx = 1.0 / numSteps;
+
 void main()
 {
-	float isDepth = 1;
-	float scale = 0.05;
-	float bias = 0.01;
-	vec3 E = vs_out.tsViewDir;
+	// float depth = texture(texDepth, vs_out.texCoord).r;
+	// FragColor = vec4(depth, depth, depth, 1);
+	// return;
 
-	float depth = texture(texDepth, vs_out.texCoord).r;
-	float height = (isDepth - depth) * scale + bias;
-	vec2 pO = height * (E.xy / E.z);
-	vec2 coords = vs_out.texCoord + pO;
+	// parallax step
+	vec3 E = normalize(vs_out.tsViewDir);
+	float effectHeight = 1;
 
-	vec3 tsTextureNormal = texture(texNormal, coords).rgb * 2 - vec3(1);
+	vec2 dtex = -(E.xy * scale) / (numSteps * E.z);
+	vec2 newTexCoords = vs_out.texCoord;
+	float depth = texture(texDepth, newTexCoords).r;
+
+	while(depth < effectHeight) {
+		effectHeight -= stepx;
+		newTexCoords += dtex;
+		depth = texture(texDepth, newTexCoords).r;
+	}
+
+	// parallax interpolation
+	vec2 delta = 0.5 * dtex;
+	vec2 mid = newTexCoords - delta;
+	for(int i = 0; i < 5; i++) {
+		delta *= 0.5;
+		if(texture(texDepth, mid).r < effectHeight) {
+			mid += delta;
+		} else {
+			mid -= delta;
+		}
+	}
+	newTexCoords = mid;
+
+	vec3 tsTextureNormal = texture(texNormal, newTexCoords).rgb * 2 - vec3(1);
 	vec4 texColor = vec4(1,1,1,1);
 
 	if(material.hasDiffuseTexture != 0)
 	{
-		texColor = texColor * texture(texDiffuse, coords);
+		texColor = texColor * texture(texDiffuse, newTexCoords);
 	}
 	// if(texColor.a == 0) discard;
 
