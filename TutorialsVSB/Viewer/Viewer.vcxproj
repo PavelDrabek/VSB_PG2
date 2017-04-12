@@ -282,6 +282,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="demo6.cpp" />
     <ClCompile Include="demo7.cpp" />
     <ClCompile Include="demo8.cpp" />
+    <ClCompile Include="demo9.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="program.cpp" />
     <ClCompile Include="sceneManager.cpp" />
@@ -330,6 +331,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="demo6.h" />
     <ClInclude Include="demo7.h" />
     <ClInclude Include="demo8.h" />
+    <ClInclude Include="demo9.h" />
     <ClInclude Include="demos.h" />
     <ClInclude Include="entity_Cube.h" />
     <ClInclude Include="entity_Tetraedr_Simple.h" />
