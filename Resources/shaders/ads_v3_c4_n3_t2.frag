@@ -51,4 +51,5 @@ void main()
 	FragColor = texture(tex1, texCoord);
 
 	// FragColor = vec4(ambient + diffuse + specular, 1);
+	FragColor = vec4(1, 0, 0, 1);
 }

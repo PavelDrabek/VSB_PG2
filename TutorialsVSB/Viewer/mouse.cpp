@@ -56,7 +56,7 @@ void Mouse::click(int button, int buttonState, int x, int y)
 	m_specialKey = glutGetModifiers();
 	switch ( button ) 
 	{
-		case GLUT_RIGHT_BUTTON:
+		case GLUT_LEFT_BUTTON:
 			switch (m_specialKey)
 			{
 				case GLUT_ACTIVE_CTRL:
@@ -76,7 +76,7 @@ void Mouse::click(int button, int buttonState, int x, int y)
 		case GLUT_MIDDLE_BUTTON:
 			//state = CAMERA_ZOOMING;
 			break;
-		case GLUT_LEFT_BUTTON:
+		case GLUT_RIGHT_BUTTON:
 			//state = CAMERA_MOVING;
 			break;
 		case GLUT_WHEEL_UP:

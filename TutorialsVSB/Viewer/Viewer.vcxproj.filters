@@ -39,6 +39,8 @@
     <ClCompile Include="demo9.cpp">
       <Filter>Demos</Filter>
     </ClCompile>
+    <ClCompile Include="DemoProjekt.cpp" />
+    <ClCompile Include="Demo10.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -186,5 +188,7 @@
     <ClInclude Include="demo9.h">
       <Filter>Demos</Filter>
     </ClInclude>
+    <ClInclude Include="DemoProjekt.h" />
+    <ClInclude Include="Demo10.h" />
   </ItemGroup>
 </Project>
