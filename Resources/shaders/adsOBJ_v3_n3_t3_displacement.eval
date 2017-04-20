@@ -26,7 +26,7 @@ out vec4 ecPosition;
 out vec3 ecLightDir;
 out vec3 ecNormal;
 out vec3 ecViewDir;
-out vec2 texCoords;
+out vec2 texCoord;
 
 const float displacementFactor = 0.3;
 
@@ -49,12 +49,12 @@ void main()
 
 	//2. Displace the vertex along the normal
 	float displacement = texture(texDepth, wcTexCoords3).r;
-	wcPosition3 += wcNormal3 * displacement;
+	wcPosition3 += wcNormal3 * displacement * 0.2;
 	
-	texCoords = wcTexCoords3;
-    	ecPosition = VMatrix * vec4(wcPosition3, 1.0);
-    	ecLightDir   = vec3(VMatrix * light.position - ecPosition);
-    	ecNormal =  vec3(VMatrix * vec4(wcNormal3, 0.0));
-    	ecViewDir = -vec3(ecPosition);
-    	gl_Position  = PMatrix * ecPosition;
+	texCoord = wcTexCoords3;
+	ecPosition = VMatrix * vec4(wcPosition3, 1.0);
+	ecLightDir   = vec3(VMatrix * light.position - ecPosition);
+	ecNormal =  vec3(VMatrix * vec4(wcNormal3, 0.0));
+	ecViewDir = -vec3(ecPosition);
+	gl_Position  = PMatrix * ecPosition;
 }

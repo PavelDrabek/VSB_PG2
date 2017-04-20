@@ -13,7 +13,7 @@ out vec2 wcTexCoords;
 
 void main()
 {
-	wcPosition 	= vec3(MMatrix *  vec4(VertexPosition, 1));
-	wcNormal 	= vec3(MMatrix *  vec4(VertexNormal, 0));
+	wcPosition 	= vec3(MMatrix * vec4(VertexPosition, 1));
+	wcNormal 	= vec3(MMatrix * vec4(VertexNormal, 0));
 	wcTexCoords = VertexTex.xy;
 }

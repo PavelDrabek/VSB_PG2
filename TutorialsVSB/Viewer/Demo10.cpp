@@ -16,7 +16,7 @@ void Demo10::initShaders()
 
 	//TODO - update previous ADS shader to accept texture:
 	//initShaderProgram("ads_v3_n3_t3_parallax.vert", "ads_v3_n3_t3_parallax.frag");
-	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_c4_n3_t2.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement.eval");
+	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement.eval");
 
 	resetResPath();
 }
@@ -207,38 +207,6 @@ void Demo10::render()
 
 	glDisable(GL_BLEND);
 
-	/*
-	// terrain
-	ss->m_activeShader = m_sceneData->shaderPrograms[3];
-	ss->m_activeShader->enable();
-	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[0]);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
-
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "TMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tMatrix[0]);
-
-	for (Entity **e = m_sceneData->sceneEntities.front(); e <= m_sceneData->sceneEntities.back(); e++)
-	{
-	if ((*e)->m_material->m_transparency <= 0) {
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&((*e)->m_modelMatrix[0]));
-
-	Material::setShaderUniform((*e)->m_material, ss->m_activeShader, "material");
-	(*e)->draw();
-	}
-	}
-	*/
-
-	// not transparent
 	ss->m_activeShader = m_sceneData->shaderPrograms[1];
 	ss->m_activeShader->enable();
 	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
@@ -260,38 +228,26 @@ void Demo10::render()
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "TMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tMatrix[0]);
 
-	Entity_OBJ *e = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
+	Entity_OBJ *tess = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
 
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&e->m_modelMatrix[0]);
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tess->m_modelMatrix[0]);
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "CameraPosition");
 	glUniform3fv(uniform, 1, (float*)&ss->m_activeCamera->getPosition()[0]);
-	Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
+	Material::setShaderUniform(tess->m_material, ss->m_activeShader, "material");
 
 
 	//Entity_OBJ* a = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
-	glBindVertexArray(e->m_vao->m_object);
+	glBindVertexArray(tess->m_vao->m_object);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-	for (unsigned int i = 0; i < e->m_vao->m_eai->size(); i++)
+	for (unsigned int i = 0; i < tess->m_vao->m_eai->size(); i++)
 	{
 		glDrawArrays(GL_PATCHES,
-			e->m_vao->m_eai->at(i).m_startIndex,
-			e->m_vao->m_eai->at(i).m_noIndices);
+			tess->m_vao->m_eai->at(i).m_startIndex,
+			tess->m_vao->m_eai->at(i).m_noIndices);
 	}
 	glBindVertexArray(0);
-
-	/*
-	for (Entity **e = m_sceneData->sceneEntities.front(); e <= m_sceneData->sceneEntities.back(); e++)
-	{
-		if ((*e)->m_material->m_transparency <= 0) {
-			uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
-			glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&((*e)->m_modelMatrix[0]));
-
-			Material::setShaderUniform((*e)->m_material, ss->m_activeShader, "material");
-			(*e)->draw();
-		}
-	}*/
 
 	ss->m_activeShader->disable();
 

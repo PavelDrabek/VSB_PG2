@@ -24,7 +24,8 @@ layout(location = 0) out vec4 FragColor;
 
 uniform LightInfo light;
 uniform MaterialInfo material;
-uniform sampler2D tex1;
+uniform sampler2D texDiffuse;
+uniform sampler2D texNormal;
 
 //The prefix ec means Eye Coordinates in the Eye Coordinate System
 in vec4 ecPosition;			
@@ -33,22 +34,42 @@ in vec3 ecNormal;
 in vec3 ecViewDir;
 in vec2 texCoord;
 
+const float scale = 0.05;
+const float numSteps = 10;
+float stepx = 1.0 / numSteps;
+
 void main()
 {
-	vec3 N = normalize(ecNormal);
+	vec2 newTexCoords = texCoord;
+	vec3 tsTextureNormal = texture(texNormal, newTexCoords).rgb * 2 - vec3(1);
+	vec4 texColor = vec4(1,1,1,1);
+
+	if(material.hasDiffuseTexture != 0)
+	{
+		texColor = texColor * texture(texDiffuse, newTexCoords);
+	}
+	// if(texColor.a == 0) discard;
+
+	FragColor = light.ambient * material.ambient * texColor;
+
+	vec3 N = normalize(tsTextureNormal + ecNormal);
 	vec3 L = normalize(ecLightDir);
-	// vec3 R = normalize(-reflect(L, N));
-	vec3 R = normalize(2 * dot(L, N) * N - L);
-	vec3 ecViewDir_norm = normalize(ecViewDir);
 
-	float lambert = dot(R, N);
-	float phong = max(pow(dot(ecViewDir_norm, R), 40), 0);
-	
-	vec3 ambient = material.ambient.xyz * light.ambient.xyz;
-	vec3 diffuse = lambert * material.diffuse.xyz * light.diffuse.xyz;
-	vec3 specular = phong * material.specular.xyz * light.specular.xyz;
+	float lambert = 0;
+	if(material.transparency > 0) {
+		lambert = abs(dot(N, L));
+	} else {
+		lambert = max(dot(N, L), 0);
+	}
 
-	FragColor = texture(tex1, texCoord);
+	if(lambert > 0) {
+		FragColor += light.diffuse * 1 * texColor * lambert;
+		vec3 E = normalize(ecViewDir);
+		vec3 R = normalize(-reflect(L, N));
+		float specular = max(pow(dot(R, E), 40), 0);
+		FragColor += light.specular * 1 * texColor * specular;
+	}
 
+	// FragColor = texture(texNormal, texCoord);
 	// FragColor = vec4(ambient + diffuse + specular, 1);
 }

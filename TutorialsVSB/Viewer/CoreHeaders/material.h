@@ -108,9 +108,28 @@ struct Material
 		//memcpy_s(&tmp[length], 128, "diffuseTexture\0", 15);
 		//if ((uniform = glGetUniformLocation(spPtr->programObject, tmp))>=0)
 		//	glUniform1ui(uniform, diffuseTextureGL);
-		
-		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "diffuseTexture"))>=0)
+
+		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "tex1")) >= 0) {
 			glUniform1i(uniform, 0);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+		}
+		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "tex2")) >= 0) {
+			glUniform1i(uniform, 1);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+		}
+		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texDiffuse")) >= 0) {
+			glUniform1i(uniform, 0);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+		} else {
+			printf("cannot find texDiffuse \n");
+		}
+		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texNormal")) >= 0) {
+			glUniform1i(uniform, 1);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+		} else {
+			printf("cannot find texNormal \n");
+		}
+		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texDepth")) >= 0) {
+			glUniform1i(uniform, 2);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+		} else {
+			printf("cannot find texDepth \n");
+		}
 	}
 
 
