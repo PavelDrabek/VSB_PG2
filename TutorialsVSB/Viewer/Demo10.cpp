@@ -14,8 +14,6 @@ void Demo10::initShaders()
 	addResPath("shaders/");
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
-	//TODO - update previous ADS shader to accept texture:
-	//initShaderProgram("ads_v3_n3_t3_parallax.vert", "ads_v3_n3_t3_parallax.frag");
 	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement.eval");
 
 	resetResPath();
@@ -28,7 +26,7 @@ void Demo10::initModels()
 
 	addResPath("models/");
 
-	m = objL.loadModel(getResFile("basic/plane.obj"));
+	m = objL.loadModel(getResFile("basic/sphereFix.obj"));
 	m_sceneData->models.push_back(m);
 
 	resetResPath();

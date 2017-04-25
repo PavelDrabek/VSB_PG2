@@ -1,5 +1,8 @@
 #include "DemoProjekt.h"
 
+#include <time.h>
+#include <chrono>
+#include <math.h>
 #include "vao_SceneOrigin.h"
 #include "vao_GridXY.h"
 #include "vao_CubeV3C4N3T2.h"
@@ -9,13 +12,14 @@
 #include "entity_Cube.h"
 #include "entity_OBJ.h"
 
+using namespace std::chrono;
+
 void DemoProjekt::initShaders()
 {
 	addResPath("shaders/");
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
-	//TODO - update previous ADS shader to accept texture:
-	initShaderProgram("ads_v3_n3_t3_parallax.vert", "ads_v3_n3_t3_parallax.frag");
+	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement.eval");
 
 	resetResPath();
 }
@@ -27,7 +31,7 @@ void DemoProjekt::initModels()
 
 	addResPath("models/");
 
-	m = objL.loadModel(getResFile("basic/plane.obj"));
+	m = objL.loadModel(getResFile("basic/sphereFix.obj"));
 	m_sceneData->models.push_back(m);
 
 	resetResPath();
@@ -177,7 +181,6 @@ void DemoProjekt::initSceneEntities()
 
 void DemoProjekt::render()
 {
-	Entity *e = nullptr;
 	SceneSetting *ss = SceneSetting::GetInstance();
 
 #pragma region Draw Info Entities
@@ -207,38 +210,6 @@ void DemoProjekt::render()
 
 	glDisable(GL_BLEND);
 
-	/*
-	// terrain
-	ss->m_activeShader = m_sceneData->shaderPrograms[3];
-	ss->m_activeShader->enable();
-	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[0]);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
-
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "TMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tMatrix[0]);
-
-	for (Entity **e = m_sceneData->sceneEntities.front(); e <= m_sceneData->sceneEntities.back(); e++)
-	{
-	if ((*e)->m_material->m_transparency <= 0) {
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&((*e)->m_modelMatrix[0]));
-
-	Material::setShaderUniform((*e)->m_material, ss->m_activeShader, "material");
-	(*e)->draw();
-	}
-	}
-	*/
-
-	// not transparent
 	ss->m_activeShader = m_sceneData->shaderPrograms[1];
 	ss->m_activeShader->enable();
 	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
@@ -252,6 +223,7 @@ void DemoProjekt::render()
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[2]);
 
+
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
@@ -259,43 +231,32 @@ void DemoProjekt::render()
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "TMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tMatrix[0]);
 
-	for (Entity **e = m_sceneData->sceneEntities.front(); e <= m_sceneData->sceneEntities.back(); e++)
+	Entity_OBJ *tess = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
+	//float timeSec = abs((time(0) % 20) - 10) / 10.0f;
+	milliseconds mili = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+	timeSec += 0.05f;
+	printf("time %f\n", timeSec);
+
+
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tess->m_modelMatrix[0]);
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "CameraPosition");
+	glUniform3fv(uniform, 1, (float*)&ss->m_activeCamera->getPosition()[0]);
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "time");
+	glUniform1fv(uniform, 1, &timeSec);
+	Material::setShaderUniform(tess->m_material, ss->m_activeShader, "material");
+
+	//Entity_OBJ* a = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
+	glBindVertexArray(tess->m_vao->m_object);
+	glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+	for (unsigned int i = 0; i < tess->m_vao->m_eai->size(); i++)
 	{
-		if ((*e)->m_material->m_transparency <= 0) {
-			uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
-			glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&((*e)->m_modelMatrix[0]));
-
-			Material::setShaderUniform((*e)->m_material, ss->m_activeShader, "material");
-			(*e)->draw();
-		}
+		glDrawArrays(GL_PATCHES,
+			tess->m_vao->m_eai->at(i).m_startIndex,
+			tess->m_vao->m_eai->at(i).m_noIndices);
 	}
-
-	/*
-	// transparent
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-	glDisable(GL_CULL_FACE);
-
-	ss->m_activeShader = m_sceneData->shaderPrograms[2];
-	ss->m_activeShader->enable();
-	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
-
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
-
-	for (Entity **e = m_sceneData->sceneEntities.front(); e <= m_sceneData->sceneEntities.back(); e++)
-	{
-	if ((*e)->m_material->m_transparency > 0) {
-	Material::setShaderUniform((*e)->m_material, ss->m_activeShader, "material");
-	(*e)->draw();
-	}
-	}
-	glDepthMask(GL_TRUE);
-	*/
+	glBindVertexArray(0);
 
 	ss->m_activeShader->disable();
 

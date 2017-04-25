@@ -16,6 +16,7 @@ private:
 
 	GLuint createTexture(const char *resourceFileName, int wrap, int filter);
 
+	float timeSec = 0;
 	int texWidth = 200;
 	int texHeight = 200;
 	GLubyte* buffer;
