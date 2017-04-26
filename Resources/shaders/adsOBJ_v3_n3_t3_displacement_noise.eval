@@ -17,6 +17,7 @@ uniform mat4 VMatrix;		//Camera view matrix
 
 uniform sampler2D texDepth;		
 uniform LightInfo light;
+uniform float time;
 
 in vec3 wcPosition2[];
 in vec3 wcNormal2[];
@@ -40,6 +41,29 @@ vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)
     return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
 } 
 
+float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
+
+float noise(vec2 x) {
+	vec2 i = floor(x);
+	vec2 f = fract(x);
+
+	// Four corners in 2D of a tile
+	float a = hash(i);
+	float b = hash(i + vec2(1.0, 0.0));
+	float c = hash(i + vec2(0.0, 1.0));
+	float d = hash(i + vec2(1.0, 1.0));
+
+	// Simple 2D lerp using smoothstep envelope between the values.
+	// return vec3(mix(mix(a, b, smoothstep(0.0, 1.0, f.x)),
+	//			mix(c, d, smoothstep(0.0, 1.0, f.x)),
+	//			smoothstep(0.0, 1.0, f.y)));
+
+	// Same code, with the clamps in smoothstep and common subexpressions
+	// optimized away.
+	vec2 u = f * f * (3.0 - 2.0 * f);
+	return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
 void main()
 {
 	//1. Interpolate the attributes of the output vertex using the barycentric coordinates
@@ -47,9 +71,11 @@ void main()
 	vec3 wcNormal3 = interpolate3D(wcNormal2[0], wcNormal2[1], wcNormal2[2]); 
 	vec3 wcPosition3 = interpolate3D(wcPosition2[0], wcPosition2[1], wcPosition2[2]); 
 
+	float t = time * 0.1;
+
 	//2. Displace the vertex along the normal
 	float displacement = texture(texDepth, wcTexCoords3).r * 0.2;
-	wcPosition3 += wcNormal3 * displacement;
+	wcPosition3 += wcNormal3 * displacement * noise(wcTexCoords3 * 1 + vec2(t));
 	
 	texCoord = wcTexCoords3;
 	ecPosition = VMatrix * vec4(wcPosition3, 1.0);

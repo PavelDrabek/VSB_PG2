@@ -19,7 +19,7 @@ void DemoProjekt::initShaders()
 	addResPath("shaders/");
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
-	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement.eval");
+	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_noise.eval");
 
 	resetResPath();
 }
@@ -31,8 +31,12 @@ void DemoProjekt::initModels()
 
 	addResPath("models/");
 
-	m = objL.loadModel(getResFile("basic/sphereFix.obj"));
+	m = objL.loadModel(getResFile("basic/sphereFix2.obj"));
 	m_sceneData->models.push_back(m);
+
+	m = objL.loadModel(getResFile("basic/plane.obj"));
+	m_sceneData->models.push_back(m);
+
 
 	resetResPath();
 }
@@ -51,9 +55,13 @@ void DemoProjekt::initVAOs()
 	vao2->init();
 	m_sceneData->vaos.push_back(vao2);
 
-	VAO* vao3 = new VAO();
-	vao3->createFromModelWithTBN(m_sceneData->models[0]);
-	m_sceneData->vaos.push_back(vao3);
+	VAO* vaoObj = new VAO();
+	vaoObj->createFromModelWithTBN(m_sceneData->models[0]);
+	m_sceneData->vaos.push_back(vaoObj);
+
+	vaoObj = new VAO();
+	vaoObj->createFromModelWithTBN(m_sceneData->models[1]);
+	m_sceneData->vaos.push_back(vaoObj);
 
 }
 
@@ -73,6 +81,12 @@ void DemoProjekt::initTextures()
 	m_sceneData->textures.push_back(texID);
 
 	texID = createTexture("stonewallDepth.bmp", GL_REPEAT, GL_LINEAR);
+	m_sceneData->textures.push_back(texID);
+
+	texID = createTexture("lava.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	m_sceneData->textures.push_back(texID);
+
+	texID = createTexture("grassDISP.jpg", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
 	resetResPath();
@@ -179,34 +193,16 @@ void DemoProjekt::initSceneEntities()
 	m_sceneData->sceneEntities.push_back(obj);
 }
 
-void DemoProjekt::render()
+void DemoProjekt::drawSphere()
 {
-	SceneSetting *ss = SceneSetting::GetInstance();
-
-#pragma region Draw Info Entities
-
-	ss->m_activeShader = m_sceneData->shaderPrograms[0];
-	ss->m_activeShader->enable();
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-
-	int uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MVPMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewProjectionMatrix());
-
-	for (unsigned int i = 0; i < m_sceneData->infoEntities.size(); i++)
-		m_sceneData->infoEntities[i]->draw();
-
-#pragma endregion
-
-#pragma region Draw Scene Entities
-
 	glm::mat4 tMatrix(
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	);
+
+	SceneSetting *ss = SceneSetting::GetInstance();
 
 	glDisable(GL_BLEND);
 
@@ -224,7 +220,7 @@ void DemoProjekt::render()
 	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[2]);
 
 
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
+	int uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
@@ -232,11 +228,6 @@ void DemoProjekt::render()
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tMatrix[0]);
 
 	Entity_OBJ *tess = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
-	//float timeSec = abs((time(0) % 20) - 10) / 10.0f;
-	milliseconds mili = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
-	timeSec += 0.05f;
-	printf("time %f\n", timeSec);
-
 
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tess->m_modelMatrix[0]);
@@ -257,6 +248,32 @@ void DemoProjekt::render()
 			tess->m_vao->m_eai->at(i).m_noIndices);
 	}
 	glBindVertexArray(0);
+}
+
+void DemoProjekt::render()
+{
+	SceneSetting *ss = SceneSetting::GetInstance();
+	timeSec += 0.05f;
+
+#pragma region Draw Info Entities
+
+	ss->m_activeShader = m_sceneData->shaderPrograms[0];
+	ss->m_activeShader->enable();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	int uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MVPMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewProjectionMatrix());
+
+	for (unsigned int i = 0; i < m_sceneData->infoEntities.size(); i++)
+		m_sceneData->infoEntities[i]->draw();
+
+#pragma endregion
+
+#pragma region Draw Scene Entities
+
+	drawSphere();
 
 	ss->m_activeShader->disable();
 

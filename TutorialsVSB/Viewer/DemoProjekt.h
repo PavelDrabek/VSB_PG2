@@ -14,6 +14,8 @@ private:
 	void initInfoEntities();
 	void initSceneEntities();
 
+	void drawSphere();
+
 	GLuint createTexture(const char *resourceFileName, int wrap, int filter);
 
 	float timeSec = 0;

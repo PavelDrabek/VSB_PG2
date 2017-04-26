@@ -18,12 +18,10 @@ float GetTessLevel(float distance0, float distance1)
 {
 	//3. some logic based on distances
 	float avgDist = (distance0 + distance1) * 0.5;
-	if(avgDist <= 5){
-		return 5.0;
-	} else if(avgDist == 0.5) {
-		return 0.4;
+	if(avgDist <= 3){
+		return 3.0;
 	} else {
-		return 0.2;
+		return 1.0;
 	}
 
 	// return max(avgDist, 4);
