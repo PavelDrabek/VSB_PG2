@@ -15,6 +15,7 @@ private:
 	void initSceneEntities();
 
 	void drawSphere();
+	void drawLava();
 
 	GLuint createTexture(const char *resourceFileName, int wrap, int filter);
 

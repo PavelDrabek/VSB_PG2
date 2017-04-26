@@ -20,6 +20,7 @@ void DemoProjekt::initShaders()
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
 	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_noise.eval");
+	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth_nophong.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_lava.eval");
 
 	resetResPath();
 }
@@ -86,7 +87,10 @@ void DemoProjekt::initTextures()
 	texID = createTexture("lava.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("grassDISP.jpg", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	texID = createTexture("grass_normals.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	m_sceneData->textures.push_back(texID);
+
+	texID = createTexture("lava.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
 	resetResPath();
@@ -147,13 +151,29 @@ void DemoProjekt::initMaterials()
 	m_sceneData->materials.push_back(m);
 
 	m = new Material();
-	m->setName("White_opaque");
+	m->setName("Stone");
 	m->m_ambient[0] = m->m_ambient[1] = m->m_ambient[2] = 1.0f;	 m->m_ambient[3] = 1.0f;
 	m->m_diffuse[0] = 0.8f; m->m_diffuse[1] = 1.0; m->m_diffuse[2] = 0.8f;	 m->m_diffuse[3] = 1.0f;
 	m->m_specular[0] = m->m_specular[1] = m->m_specular[2] = 0.2f; m->m_specular[3] = 1.0f;
 	m->m_transparency = 0.0f;
 	m->m_diffuseTextureGL = m_sceneData->textures[0];
+	m->m_normalTextureGL = m_sceneData->textures[1];
+	m->m_depthTextureGL = m_sceneData->textures[2];
+	m->height = 0.3f;
 	m_sceneData->materials.push_back(m);
+
+	m = new Material();
+	m->setName("Lava");
+	m->m_ambient[0] = m->m_ambient[1] = m->m_ambient[2] = 1.0f;	 m->m_ambient[3] = 1.0f;
+	m->m_diffuse[0] = 0.8f; m->m_diffuse[1] = 1.0; m->m_diffuse[2] = 0.8f;	 m->m_diffuse[3] = 1.0f;
+	m->m_specular[0] = m->m_specular[1] = m->m_specular[2] = 0.2f; m->m_specular[3] = 1.0f;
+	m->m_transparency = 0.0f;
+	m->m_diffuseTextureGL = m_sceneData->textures[3];
+	m->m_normalTextureGL = m_sceneData->textures[4];
+	m->m_depthTextureGL = m_sceneData->textures[5];
+	m->height = -0.1f;
+	m_sceneData->materials.push_back(m);
+
 
 	m = new Material();
 	m->setName("White_transparent");
@@ -186,66 +206,85 @@ void DemoProjekt::initSceneEntities()
 	*/
 
 	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[0], m_sceneData->vaos[3]);
-	obj->setPosition(0, 0, 0);
+	obj->setPosition(0, 0, 1);
 	obj->setOrientation(0, 0, 90);
 	obj->m_material = m_sceneData->materials[1];
+	obj->init();
+	m_sceneData->sceneEntities.push_back(obj);
+
+	obj = new Entity_OBJ(m_sceneData->models[1], m_sceneData->vaos[4]);
+	obj->setPosition(0, 0, 0);
+	obj->setOrientation(0, 0, 90);
+	obj->setScale(4, 4, 1);
+	obj->m_material = m_sceneData->materials[2];
 	obj->init();
 	m_sceneData->sceneEntities.push_back(obj);
 }
 
 void DemoProjekt::drawSphere()
 {
-	glm::mat4 tMatrix(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	);
-
 	SceneSetting *ss = SceneSetting::GetInstance();
-
-	glDisable(GL_BLEND);
 
 	ss->m_activeShader = m_sceneData->shaderPrograms[1];
 	ss->m_activeShader->enable();
 	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[0]);
+	int uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "CameraPosition");
+	glUniform3fv(uniform, 1, (float*)&ss->m_activeCamera->getPosition()[0]);
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "time");
+	glUniform1fv(uniform, 1, &timeSec);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
+	Entity_OBJ *e = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&e->m_modelMatrix[0]);
+	Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
 
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[2]);
+	glBindVertexArray(e->m_vao->m_object);
+	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
+	for (unsigned int i = 0; i < e->m_vao->m_eai->size(); i++)
+	{
+		glDrawArrays(GL_PATCHES,
+			e->m_vao->m_eai->at(i).m_startIndex,
+			e->m_vao->m_eai->at(i).m_noIndices);
+	}
+	glBindVertexArray(0);
+}
+
+void DemoProjekt::drawLava()
+{
+	SceneSetting *ss = SceneSetting::GetInstance();
+
+	ss->m_activeShader = m_sceneData->shaderPrograms[2];
+	ss->m_activeShader->enable();
+	Light::setShaderUniform(m_sceneData->lights.at(0), ss->m_activeShader, "light");
 
 	int uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "PMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "TMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tMatrix[0]);
-
-	Entity_OBJ *tess = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
-
-	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&tess->m_modelMatrix[0]);
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "CameraPosition");
 	glUniform3fv(uniform, 1, (float*)&ss->m_activeCamera->getPosition()[0]);
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "time");
 	glUniform1fv(uniform, 1, &timeSec);
-	Material::setShaderUniform(tess->m_material, ss->m_activeShader, "material");
 
-	//Entity_OBJ* a = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[0]);
-	glBindVertexArray(tess->m_vao->m_object);
+	Entity_OBJ *e = static_cast<Entity_OBJ*>(m_sceneData->sceneEntities[1]);
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MMatrix");
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&e->m_modelMatrix[0]);
+	Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
+
+	glBindVertexArray(e->m_vao->m_object);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-	for (unsigned int i = 0; i < tess->m_vao->m_eai->size(); i++)
+	for (unsigned int i = 0; i < e->m_vao->m_eai->size(); i++)
 	{
 		glDrawArrays(GL_PATCHES,
-			tess->m_vao->m_eai->at(i).m_startIndex,
-			tess->m_vao->m_eai->at(i).m_noIndices);
+			e->m_vao->m_eai->at(i).m_startIndex,
+			e->m_vao->m_eai->at(i).m_noIndices);
 	}
 	glBindVertexArray(0);
 }
@@ -274,6 +313,7 @@ void DemoProjekt::render()
 #pragma region Draw Scene Entities
 
 	drawSphere();
+	drawLava();
 
 	ss->m_activeShader->disable();
 

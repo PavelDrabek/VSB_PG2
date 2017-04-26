@@ -72,11 +72,11 @@ void main()
 	vec3 wcNormal3 = interpolate3D(wcNormal2[0], wcNormal2[1], wcNormal2[2]); 
 	vec3 wcPosition3 = interpolate3D(wcPosition2[0], wcPosition2[1], wcPosition2[2]); 
 
-	float t = time * 0.2;
+	float t = time * 0.05;
 
 	//2. Displace the vertex along the normal
-	float displacement = texture(texDepth, wcTexCoords3).r * height;
-	wcPosition3 += wcNormal3 * displacement * noise(wcTexCoords3 + vec2(t));
+	float displacement = (texture(texDepth, wcTexCoords3).r + 1) * height;
+	wcPosition3 += wcNormal3 * displacement * noise(wcTexCoords3 * 3 + vec2(t));
 	
 	texCoord = wcTexCoords3;
 	ecPosition = VMatrix * vec4(wcPosition3, 1.0);

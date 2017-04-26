@@ -21,6 +21,9 @@ struct Material
 	float m_shininess;
 	int m_illumination;
 	GLuint m_diffuseTextureGL;
+	GLuint m_normalTextureGL;
+	GLuint m_depthTextureGL;
+	float height;
 
 	char m_name[256];
 	char m_diffuseTexture[256];
@@ -109,6 +112,18 @@ struct Material
 		//if ((uniform = glGetUniformLocation(spPtr->programObject, tmp))>=0)
 		//	glUniform1ui(uniform, diffuseTextureGL);
 
+	/*	glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[0]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[2]);
+*/
+		int texOffset = 0;
+
+		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "height")) >= 0) {
+			glUniform1f(uniform, material->height);
+		}
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "tex1")) >= 0) {
 			glUniform1i(uniform, 0);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 		}
@@ -116,17 +131,26 @@ struct Material
 			glUniform1i(uniform, 1);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 		}
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texDiffuse")) >= 0) {
-			glUniform1i(uniform, 0);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+			glActiveTexture(GL_TEXTURE0 + texOffset);
+			glBindTexture(GL_TEXTURE_2D, material->m_diffuseTextureGL);
+			glUniform1i(uniform, texOffset);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+			texOffset++;
 		} else {
 			printf("cannot find texDiffuse \n");
 		}
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texNormal")) >= 0) {
-			glUniform1i(uniform, 1);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+			glActiveTexture(GL_TEXTURE0 + texOffset);
+			glBindTexture(GL_TEXTURE_2D, material->m_normalTextureGL);
+			glUniform1i(uniform, texOffset);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+			texOffset++;
 		} else {
 			printf("cannot find texNormal \n");
 		}
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texDepth")) >= 0) {
-			glUniform1i(uniform, 2);			//Texture unit is set = sampler will access GL_TEXTURE1 = texture unit 1. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+			glActiveTexture(GL_TEXTURE0 + texOffset);
+			glBindTexture(GL_TEXTURE_2D, material->m_depthTextureGL);
+			glUniform1i(uniform, texOffset);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
+			texOffset++;
 		} else {
 			printf("cannot find texDepth \n");
 		}
