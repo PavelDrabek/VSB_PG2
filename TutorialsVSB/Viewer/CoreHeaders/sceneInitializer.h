@@ -93,9 +93,9 @@ protected:
 		strcpy_s(m_resourcePath, 1024, DEFAULT_RESOURCE_PATH);
 		strcpy_s(m_resourceFile, 1024, "");
 	}
-	void initShaderProgram(const char* vertexShader, const char* fragmentShader);
-	void initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader);
-	void initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader, const char* tesselationControlShader, const char* tesselationEvaluationShader);
+	ShaderProgram* initShaderProgram(const char* vertexShader, const char* fragmentShader);
+	ShaderProgram* initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader);
+	ShaderProgram* initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader, const char* tesselationControlShader, const char* tesselationEvaluationShader);
 	bool checkFramebufferStatus();
 
 	void resetResPath();
@@ -139,7 +139,7 @@ inline const char* SceneInitializer::getResFile(const char *resourceFileName)
 	return m_resourceFile;
 }
 
-inline void SceneInitializer::initShaderProgram(const char* vertexShader, const char* fragmentShader)
+inline ShaderProgram* SceneInitializer::initShaderProgram(const char* vertexShader, const char* fragmentShader)
 {
 	Shader *s;
 	ShadersFlag flag = SF_NONE;
@@ -161,10 +161,11 @@ inline void SceneInitializer::initShaderProgram(const char* vertexShader, const 
 
 	ShaderProgram *sp = new ShaderProgram(	(flag & SF_VERTEX) ? m_sceneData->vertexShaders.at(m_sceneData->vertexShaders.size()-1) : 0,
 											(flag & SF_FRAGMENT) ? m_sceneData->fragmentShaders.at(m_sceneData->fragmentShaders.size()-1) : 0);
-	m_sceneData->shaderPrograms.push_back(sp);
+	return sp;
+	//m_sceneData->shaderPrograms.push_back(sp);
 }
 
-inline void SceneInitializer::initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader)
+inline ShaderProgram* SceneInitializer::initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader)
 {
 	Shader *s;
 	ShadersFlag flag = SF_NONE;
@@ -195,10 +196,12 @@ inline void SceneInitializer::initShaderProgram(const char* vertexShader, const 
 	ShaderProgram *sp = new ShaderProgram(	(flag & SF_VERTEX) ? m_sceneData->vertexShaders.at(m_sceneData->vertexShaders.size()-1) : 0,
 											(flag & SF_FRAGMENT) ? m_sceneData->fragmentShaders.at(m_sceneData->fragmentShaders.size()-1) : 0,
 											(flag & SF_GEOMETRY) ? m_sceneData->geometryShaders.at(m_sceneData->geometryShaders.size()-1) : 0);
-	m_sceneData->shaderPrograms.push_back(sp);
+
+	return sp;
+	//m_sceneData->shaderPrograms.push_back(sp);
 }
 
-inline void SceneInitializer::initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader, const char* tesselationControlShader, const char* tesselationEvaluationShader)
+inline ShaderProgram* SceneInitializer::initShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader, const char* tesselationControlShader, const char* tesselationEvaluationShader)
 {
 	Shader *s;
 	ShadersFlag flag = SF_NONE;
@@ -247,7 +250,8 @@ inline void SceneInitializer::initShaderProgram(const char* vertexShader, const 
 											(flag & SF_GEOMETRY) ? m_sceneData->geometryShaders.at(m_sceneData->geometryShaders.size()-1) : 0,
 											(flag & SF_TESSELATION_CONTROL) ? m_sceneData->tesselationControlShaders.at(m_sceneData->tesselationControlShaders.size()-1) : 0,
 											(flag & SF_TESSELATION_EVALUATION) ? m_sceneData->tesselationEvaluationShaders.at(m_sceneData->tesselationEvaluationShaders.size()-1) : 0);
-	m_sceneData->shaderPrograms.push_back(sp);
+	return sp;
+	//m_sceneData->shaderPrograms.push_back(sp);
 }
 
 inline bool SceneInitializer::checkFramebufferStatus()

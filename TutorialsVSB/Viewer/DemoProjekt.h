@@ -14,6 +14,7 @@ private:
 	void initInfoEntities();
 	void initSceneEntities();
 
+	void loadShader(ShaderProgram *sp, int index);
 	void drawSphere();
 	void drawLava();
 
@@ -26,6 +27,7 @@ private:
 public:
 	DemoProjekt(SceneData *sdPtr) : SceneInitializer(sdPtr) {}
 
+	void reloadShaders();
 	void render();
 };
 

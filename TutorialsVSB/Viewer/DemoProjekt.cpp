@@ -14,13 +14,42 @@
 
 using namespace std::chrono;
 
+void DemoProjekt::loadShader(ShaderProgram *sp, int index)
+{
+	if (index < m_sceneData->shaderPrograms.size()) {
+		m_sceneData->shaderPrograms[index] = sp;
+	}
+	else {
+		m_sceneData->shaderPrograms.push_back(sp);
+	}
+}
+
+
 void DemoProjekt::initShaders()
 {
-	addResPath("shaders/");
-	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
+	reloadShaders();
 
-	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_noise.eval");
-	initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth_nophong.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_lava.eval");
+	//addResPath("shaders/");
+	//initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
+	//initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_noise.eval");
+	//initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth_nophong.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_lava.eval");
+
+	resetResPath();
+}
+
+
+void DemoProjekt::reloadShaders()
+{
+	printf("reloading shaders\n");
+	
+	addResPath("shaders/");
+	ShaderProgram *sp;
+	sp = initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
+	loadShader(sp, 0);
+	sp = initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_noise.eval");
+	loadShader(sp, 1);
+	sp = initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth_nophong.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_lava.eval");
+	loadShader(sp, 2);
 
 	resetResPath();
 }
