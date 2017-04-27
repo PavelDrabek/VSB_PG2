@@ -136,7 +136,7 @@ struct Material
 			glUniform1i(uniform, texOffset);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 			texOffset++;
 		} else {
-			printf("cannot find texDiffuse \n");
+			//printf("cannot find texDiffuse \n");
 		}
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texNormal")) >= 0) {
 			glActiveTexture(GL_TEXTURE0 + texOffset);
@@ -144,7 +144,7 @@ struct Material
 			glUniform1i(uniform, texOffset);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 			texOffset++;
 		} else {
-			printf("cannot find texNormal \n");
+			//printf("cannot find texNormal \n");
 		}
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "texDepth")) >= 0) {
 			glActiveTexture(GL_TEXTURE0 + texOffset);
@@ -152,7 +152,7 @@ struct Material
 			glUniform1i(uniform, texOffset);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 
 			texOffset++;
 		} else {
-			printf("cannot find texDepth \n");
+			//printf("cannot find texDepth \n");
 		}
 	}
 

@@ -80,9 +80,10 @@ inline void Entity::setPosition(const float x, const float y, const float z)
 
 inline void Entity::setScale(const float sx, const float sy, const float sz) 
 { 
-	m_modelMatrix[0][0] = sx;
-	m_modelMatrix[1][1] = sy;
-	m_modelMatrix[2][2] = sz;
+	m_modelMatrix = glm::scale(m_modelMatrix, glm::vec3(sx, sy, sz));
+	//m_modelMatrix[0][0] = sx;
+	//m_modelMatrix[1][1] = sy;
+	//m_modelMatrix[2][2] = sz;
 }
 
 inline void Entity::setOrientation(const float pitchDegrees, const float headingDegrees, const float rollDegrees)

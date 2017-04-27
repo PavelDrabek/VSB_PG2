@@ -46,9 +46,9 @@ void DemoProjekt::reloadShaders()
 	ShaderProgram *sp;
 	sp = initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 	loadShader(sp, 0);
-	sp = initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_noise.eval");
+	sp = initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_heart.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_noise.eval");
 	loadShader(sp, 1);
-	sp = initShaderProgram("adsOBJ_v3_n3_t3_displacement.vert", "ads_v3_n3_t3_norm_depth_nophong.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_lava.eval");
+	sp = initShaderProgram("adsOBJ_v3_n3_t3_displacement_lava.vert", "ads_v3_n3_t3_lava.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_lava.eval");
 	loadShader(sp, 2);
 
 	resetResPath();
@@ -61,7 +61,8 @@ void DemoProjekt::initModels()
 
 	addResPath("models/");
 
-	m = objL.loadModel(getResFile("basic/sphereFix2.obj"));
+	//m = objL.loadModel(getResFile("basic/sphereFix2.obj"));
+	m = objL.loadModel(getResFile("Heart2.obj"));
 	m_sceneData->models.push_back(m);
 
 	m = objL.loadModel(getResFile("basic/plane.obj"));
@@ -104,22 +105,22 @@ void DemoProjekt::initTextures()
 	if (buffer == NULL) exit(1);
 
 	//Load sprite textures
-	GLuint texID = createTexture("stonewallDiffuse.bmp", GL_REPEAT, GL_LINEAR);
+	GLuint texID = createTexture("HumanHeart-color.jpg", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
 	texID = createTexture("stonewallNormal.bmp", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("stonewallDepth.bmp", GL_REPEAT, GL_LINEAR);
+	texID = createTexture("HumanHeart-bump.jpg", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("lava.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	texID = createTexture("lava_diffuse.jpg", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("grass_normals.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	texID = createTexture("lava_normal.jpg", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("lava.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	texID = createTexture("lava_bump.jpg", GL_REPEAT, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
 	resetResPath();
@@ -153,7 +154,7 @@ GLuint DemoProjekt::createTexture(const char *resourceFileName, int wrap, int fi
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
 		break;
 	default:
-		printf("ERROR: Unknown BPP of image");
+		printf("ERROR: Unknown BPP of image %s", resourceFileName);
 		break;
 	}
 
@@ -200,7 +201,7 @@ void DemoProjekt::initMaterials()
 	m->m_diffuseTextureGL = m_sceneData->textures[3];
 	m->m_normalTextureGL = m_sceneData->textures[4];
 	m->m_depthTextureGL = m_sceneData->textures[5];
-	m->height = -0.1f;
+	m->height = 0.1f;
 	m_sceneData->materials.push_back(m);
 
 
@@ -236,15 +237,16 @@ void DemoProjekt::initSceneEntities()
 
 	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[0], m_sceneData->vaos[3]);
 	obj->setPosition(0, 0, 1);
-	obj->setOrientation(0, 0, 90);
+	obj->setOrientation(90, 0, 180);
 	obj->m_material = m_sceneData->materials[1];
+	obj->setScale(0.01f, 0.01f, 0.01f);
 	obj->init();
 	m_sceneData->sceneEntities.push_back(obj);
 
 	obj = new Entity_OBJ(m_sceneData->models[1], m_sceneData->vaos[4]);
 	obj->setPosition(0, 0, 0);
 	obj->setOrientation(0, 0, 90);
-	obj->setScale(4, 4, 1);
+	obj->setScale(10, 10, 1);
 	obj->m_material = m_sceneData->materials[2];
 	obj->init();
 	m_sceneData->sceneEntities.push_back(obj);

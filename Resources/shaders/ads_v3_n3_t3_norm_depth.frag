@@ -42,17 +42,17 @@ void main()
 {
 	vec2 newTexCoords = texCoord;
 	vec3 tsTextureNormal = texture(texNormal, newTexCoords).rgb * 2 - vec3(1);
-	vec4 texColor = vec4(1,1,1,1);
+	vec4 texColor = vec4(1,0,0,1);
 
 	if(material.hasDiffuseTexture != 0)
 	{
-		texColor = texColor * texture(texDiffuse, newTexCoords);
+		// texColor = texColor * texture(texDiffuse, newTexCoords);
 	}
 	// if(texColor.a == 0) discard;
 
 	FragColor = light.ambient * material.ambient * texColor;
 
-	vec3 N = normalize(tsTextureNormal + ecNormal);
+	vec3 N = normalize(ecNormal);
 	vec3 L = normalize(ecLightDir);
 
 	float lambert = 0;
@@ -70,6 +70,7 @@ void main()
 		FragColor += light.specular * 1 * texColor * specular;
 	}
 
+	// FragColor = vec4(1,0,0,1);
 	// FragColor = texture(texNormal, texCoord);
 	// FragColor = vec4(ambient + diffuse + specular, 1);
 }
