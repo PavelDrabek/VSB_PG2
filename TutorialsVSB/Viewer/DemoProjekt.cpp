@@ -112,13 +112,13 @@ void DemoProjekt::initTextures()
 	if (buffer == NULL) exit(1);
 
 	//Load sprite textures
-	GLuint texID = createTexture("HumanHeart-color.jpg", GL_REPEAT, GL_LINEAR);
+	GLuint texID = createTexture("HumanHeart-color.jpg", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("stonewallNormal.bmp", GL_REPEAT, GL_LINEAR);
+	texID = createTexture("stonewallNormal.bmp", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
-	texID = createTexture("HumanHeart-bump.jpg", GL_REPEAT, GL_LINEAR);
+	texID = createTexture("HumanHeart-bump.jpg", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
 	texID = createTexture("lava_diffuse.jpg", GL_REPEAT, GL_LINEAR);
@@ -128,6 +128,9 @@ void DemoProjekt::initTextures()
 	m_sceneData->textures.push_back(texID);
 
 	texID = createTexture("lava_bump.jpg", GL_REPEAT, GL_LINEAR);
+	m_sceneData->textures.push_back(texID);
+
+	texID = createTexture("smoketex2.jpg", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	m_sceneData->textures.push_back(texID);
 
 	resetResPath();
@@ -211,6 +214,15 @@ void DemoProjekt::initMaterials()
 	m->height = 0.1f;
 	m_sceneData->materials.push_back(m);
 
+	m = new Material();
+	m->setName("Smoke");
+	m->m_ambient[0] = m->m_ambient[1] = m->m_ambient[2] = 1.0f;	 m->m_ambient[3] = 1.0f;
+	m->m_diffuse[0] = 0.8f; m->m_diffuse[1] = 1.0; m->m_diffuse[2] = 0.8f;	 m->m_diffuse[3] = 1.0f;
+	m->m_specular[0] = m->m_specular[1] = m->m_specular[2] = 0.2f; m->m_specular[3] = 1.0f;
+	m->m_transparency = 0.0f;
+	m->m_diffuseTextureGL = m_sceneData->textures[6];
+	m_sceneData->materials.push_back(m);
+
 
 	m = new Material();
 	m->setName("White_transparent");
@@ -259,8 +271,8 @@ void DemoProjekt::initSceneEntities()
 	m_sceneData->sceneEntities.push_back(obj);
 
 	Entity_Particles* particle = new Entity_Particles(((VAO_Particle*)m_sceneData->vaos[5]));
-	particle->setPosition(0, 0, 0);
-	particle->m_material = m_sceneData->materials[1];
+	particle->setPosition(0, 0, 0.8f);
+	particle->m_material = m_sceneData->materials[3];
 	particle->init();
 	m_sceneData->sceneEntities.push_back(particle);
 
@@ -377,8 +389,8 @@ void DemoProjekt::render()
 
 #pragma region Draw Scene Entities
 
-	//drawSphere();
-	//drawLava();
+	drawSphere();
+	drawLava();
 	drawParticles();
 
 	ss->m_activeShader->disable();

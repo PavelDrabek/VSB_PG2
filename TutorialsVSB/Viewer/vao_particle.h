@@ -23,13 +23,13 @@ public:
 	{
 		GLuint vboBuffer;
 		GLfloat particle_quad[] = {
-			0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-				  
-			0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f, 0.0f
+			0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 0.0f,
+
+			0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 0.0f
 		};
 		glGenVertexArrays(1, &m_object);
 		glGenBuffers(1, &vboBuffer);
@@ -40,8 +40,8 @@ public:
 		// Set mesh attributes
 		glEnableVertexAttribArray(0); // position
 		glEnableVertexAttribArray(1); // uv
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
 		glBindVertexArray(0);
 
 		////Unbind

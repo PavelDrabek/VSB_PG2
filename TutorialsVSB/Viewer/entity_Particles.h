@@ -51,7 +51,7 @@ public:
 	virtual void draw(const unsigned int eid = 0);
 	
 	GLuint FirstUnusedParticle();
-	void RespawnParticle(Particle &particle, glm::vec3 position, glm::vec3 velocity, glm::vec3 offset);
+	void RespawnParticle(Particle &particle, glm::vec3 velocity, glm::vec3 offset);
 };
 
 inline void Entity_Particles::init()
@@ -79,28 +79,36 @@ GLuint Entity_Particles::FirstUnusedParticle()
 		}
 	}
 	// Override first particle if all others are alive
-	lastUsedParticle = 0;
-	return 0;
+	//lastUsedParticle = 0;
+	return -1;
 }
 
-void Entity_Particles::RespawnParticle(Particle &particle, glm::vec3 position, glm::vec3 velocity, glm::vec3 offset)
+void Entity_Particles::RespawnParticle(Particle &particle, glm::vec3 velocity, glm::vec3 offset)
 {
 	GLfloat random = ((rand() % 100) - 50) / 10.0f;
 	GLfloat rColor = 0.5f + ((rand() % 100) / 100.0f);
-	particle.Position = position + random + offset;
+	particle.Position = offset;
 	particle.Color = glm::vec4(rColor, rColor, rColor, 0.5f);
 	particle.Life = 1.0f;
-	particle.Velocity = velocity * 0.1f;
+	particle.Velocity = velocity;
+}
+
+float getRandom()
+{
+	return (rand() % 200) * 0.01f - 1;
 }
 
 inline void Entity_Particles::update() {
-	GLuint nr_new_particles = 2;
-	GLfloat dt = 0.001f;
+	GLuint nr_new_particles = 1;
+	GLfloat dt = 0.01f;
 	// Add new particles
 	for (GLuint i = 0; i < nr_new_particles; ++i)
 	{
 		int unusedParticle = FirstUnusedParticle();
-		RespawnParticle(particles[unusedParticle], glm::vec3(0), glm::vec3(0, 0, 1), vec3((rand() % 100) * 0.01f, 0, (rand() % 100) * 0.01f));
+		if (unusedParticle >= 0) {
+			vec3 offset = vec3(getRandom(), getRandom(), getRandom() * 0.2f) * 0.5f;
+			RespawnParticle(particles[unusedParticle], glm::vec3(0, 0, 2), offset);
+		}
 	}
 	// Uupdate all particles
 	for (GLuint i = 0; i < nr_particles; ++i)
@@ -109,8 +117,8 @@ inline void Entity_Particles::update() {
 		p.Life -= dt; // reduce life
 		if (p.Life > 0.0f)
 		{	// particle is alive, thus update
-			p.Position -= p.Velocity * dt;
-			p.Color.a -= dt * 2.5;
+			p.Position += p.Velocity * dt;
+			//p.Color.a -= dt * 2.5;
 		}
 	}
 }
@@ -120,8 +128,17 @@ inline void Entity_Particles::draw(const unsigned int eid)
 	if (!m_isInitialized) return;
 
 	SceneSetting *ss = SceneSetting::GetInstance();
+	glm::mat4 mvMatrix = ss->m_activeCamera->getVM() * m_modelMatrix;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	// transparent
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	//glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_CULL_FACE);
+
 
 	for (Particle particle : particles)
 	{
@@ -131,10 +148,12 @@ inline void Entity_Particles::draw(const unsigned int eid)
 			glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getProjectionMatrix());
 			uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "VMatrix");
 			glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewMatrix());
+			uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MVMatrix");
+			glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)&mvMatrix[0]);
 			uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "offset");
 			glUniform3fv(uniform, 1, (float*)&particle.Position[0]);
-			uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "color");
-			glUniform4fv(uniform, 1, (float*)&particle.Color[0]);
+			uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "life");
+			glUniform1fv(uniform, 1, &particle.Life);
 
 			if ((uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "sprite")) >= 0) {
 				glActiveTexture(GL_TEXTURE0);
@@ -144,10 +163,12 @@ inline void Entity_Particles::draw(const unsigned int eid)
 
 			glBindVertexArray(vao_particle->m_object);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
+
 			glBindVertexArray(0);
 		}
 	}
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_TRUE);
 
 
 }
