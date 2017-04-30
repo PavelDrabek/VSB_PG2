@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <vector>
 
 #include <glew.h>
 #include <freeglut.h>

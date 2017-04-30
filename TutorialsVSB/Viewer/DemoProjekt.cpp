@@ -11,6 +11,7 @@
 #include "entity_GridXY.h"
 #include "entity_Cube.h"
 #include "entity_OBJ.h"
+#include "entity_Particles.h"
 
 using namespace std::chrono;
 
@@ -37,7 +38,6 @@ void DemoProjekt::initShaders()
 	resetResPath();
 }
 
-
 void DemoProjekt::reloadShaders()
 {
 	printf("reloading shaders\n");
@@ -50,6 +50,8 @@ void DemoProjekt::reloadShaders()
 	loadShader(sp, 1);
 	sp = initShaderProgram("adsOBJ_v3_n3_t3_displacement_lava.vert", "ads_v3_n3_t3_lava.frag", 0, "adsOBJ_v3_n3_t3_displacement.cont", "adsOBJ_v3_n3_t3_displacement_lava.eval");
 	loadShader(sp, 2);
+	sp = initShaderProgram("particle.vert", "particle.frag");
+	loadShader(sp, 3);
 
 	resetResPath();
 }
@@ -74,6 +76,7 @@ void DemoProjekt::initModels()
 
 void DemoProjekt::initVAOs()
 {
+	
 	VAO_SceneOrigin* vao0 = new VAO_SceneOrigin();
 	vao0->init();
 	m_sceneData->vaos.push_back(vao0);
@@ -93,6 +96,10 @@ void DemoProjekt::initVAOs()
 	vaoObj = new VAO();
 	vaoObj->createFromModelWithTBN(m_sceneData->models[1]);
 	m_sceneData->vaos.push_back(vaoObj);
+
+	VAO_Particle* vaoParticles = new VAO_Particle();
+	vaoParticles->init();
+	m_sceneData->vaos.push_back(vaoParticles);
 
 }
 
@@ -250,6 +257,13 @@ void DemoProjekt::initSceneEntities()
 	obj->m_material = m_sceneData->materials[2];
 	obj->init();
 	m_sceneData->sceneEntities.push_back(obj);
+
+	Entity_Particles* particle = new Entity_Particles(((VAO_Particle*)m_sceneData->vaos[5]));
+	particle->setPosition(0, 0, 0);
+	particle->m_material = m_sceneData->materials[1];
+	particle->init();
+	m_sceneData->sceneEntities.push_back(particle);
+
 }
 
 void DemoProjekt::drawSphere()
@@ -284,6 +298,26 @@ void DemoProjekt::drawSphere()
 			e->m_vao->m_eai->at(i).m_noIndices);
 	}
 	glBindVertexArray(0);
+}
+
+void DemoProjekt::drawParticles()
+{
+	SceneSetting *ss = SceneSetting::GetInstance();
+	ss->m_activeShader = m_sceneData->shaderPrograms[3];
+
+	Entity_Particles* particles = (Entity_Particles*)m_sceneData->sceneEntities[2];
+	particles->update();
+
+	// Use additive blending to give it a 'glow' effect
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	ss->m_activeShader->enable();
+
+	particles->draw();
+
+	// Don't forget to reset to default blending mode
+	ss->m_activeShader->disable();
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 }
 
 void DemoProjekt::drawLava()
@@ -343,10 +377,14 @@ void DemoProjekt::render()
 
 #pragma region Draw Scene Entities
 
-	drawSphere();
-	drawLava();
+	//drawSphere();
+	//drawLava();
+	drawParticles();
 
 	ss->m_activeShader->disable();
+
+	//particles->update();
+	//particles->draw();
 
 	/*
 	glFlush();

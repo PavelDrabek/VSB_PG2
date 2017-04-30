@@ -75,7 +75,7 @@ void main()
 	float t = time * 0.05;
 
 	//2. Displace the vertex along the normal
-	float displacement = 0.1 * noise(wcTexCoords3 + vec2(t)) + (texture(texDepth, wcTexCoords3).r) * (0.1);
+	float displacement = 0.2 * noise(wcTexCoords3 + vec2(t)) + (texture(texDepth, wcTexCoords3).r) * (0.15);
 	wcPosition3 += wcNormal3 * displacement;
 	
 	texCoord = wcTexCoords3;

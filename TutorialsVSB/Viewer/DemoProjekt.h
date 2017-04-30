@@ -2,9 +2,11 @@
 #define __Demo9_H_
 
 #include <sceneInitializer.h>
+//#include "entity_Particles.h"
 
 class DemoProjekt : public SceneInitializer
 {
+
 private:
 	void initShaders();
 	void initModels();
@@ -17,6 +19,7 @@ private:
 	void loadShader(ShaderProgram *sp, int index);
 	void drawSphere();
 	void drawLava();
+	void drawParticles();
 
 	GLuint createTexture(const char *resourceFileName, int wrap, int filter);
 
@@ -24,6 +27,9 @@ private:
 	int texWidth = 200;
 	int texHeight = 200;
 	GLubyte* buffer;
+
+	//Entity_Particles* particles;
+
 public:
 	DemoProjekt(SceneData *sdPtr) : SceneInitializer(sdPtr) {}
 

@@ -198,5 +198,11 @@
     <ClInclude Include="DemoProjekt.h">
       <Filter>Demos</Filter>
     </ClInclude>
+    <ClInclude Include="vao_particle.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="entity_Particles.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

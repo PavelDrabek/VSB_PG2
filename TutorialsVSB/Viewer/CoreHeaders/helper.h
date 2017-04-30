@@ -45,7 +45,7 @@ static inline void releaseMappedPointer(const GLenum target)
 static inline void initBuffer(const GLuint buffer, const void* host_data, const unsigned sizeInBytes, const GLenum target, const GLenum access)
 {
 	glBindBuffer(target, buffer);
-	glBufferData(target, sizeInBytes, NULL, access);
+	glBufferData(target, sizeInBytes, NULL, access); // TODO: kdyby nefungovalo, misto NULL poslat host_data
 
 	if (host_data)
 	{
