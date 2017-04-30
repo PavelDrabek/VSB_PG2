@@ -25,5 +25,6 @@ void main()
     // gl_Position = projection * vec4((vertex.xy * scale) + offset, 0.0, 1.0);
 
     vec3 vpos = vec3(vertexPosition.x, 0, vertexPosition.y) - vec3(0.5, 0, 0.5);
-    gl_Position = PMatrix * MVMatrix * vec4(vpos * (scale + a * 0.5)  + offset, 1);
+    // gl_Position = PMatrix * MVMatrix * vec4(vpos * (scale + a * 0.5)  + offset, 1);
+    gl_Position = PMatrix * ( (MVMatrix * vec4(offset,1)) + vec4(vpos * (scale + a * 0.5), 0) ); // billboard
 }
